@@ -1,6 +1,9 @@
 #pragma once
 
 #include "byte_stream.hh"
+#include <cstdint>
+#include <set>
+#include <utility>
 
 class Reassembler
 {
@@ -42,4 +45,9 @@ public:
 
 private:
   ByteStream output_; // the Reassembler writes to this ByteStream
+  uint64_t firstUnassembledIndex { 0 };
+  uint64_t firstUnacceptableIndex { 0 };
+  uint64_t pending_num { 0 };
+  bool has_last_index {false};
+  std::set<std::pair<uint64_t, std::string>> unassembledData {}; // 存储未整合的data，按照index升序排列
 };

@@ -27,4 +27,6 @@ public:
 
 private:
   Reassembler reassembler_;
+  std::optional<Wrap32> ISN {}; // 初始值
+  uint64_t unwrapped_ackno {0};
 };

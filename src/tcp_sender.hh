@@ -6,9 +6,6 @@
 
 #include <cstdint>
 #include <functional>
-#include <list>
-#include <memory>
-#include <optional>
 #include <queue>
 
 class TCPSender
@@ -48,4 +45,17 @@ private:
   ByteStream input_;
   Wrap32 isn_;
   uint64_t initial_RTO_ms_;
+
+  bool FIN {true};
+  bool SYN {true};
+  bool has_trans_win0{false};
+  // bool SYN_not_ack {true};
+  uint64_t LastByteAcked {0}; // 表示上一个收到的ackno
+  // uint64_t LastByteSent {0};
+  uint64_t NextByte2Sent {0};
+  uint64_t rwnd {1};
+  uint64_t RTO_ms_ {initial_RTO_ms_};
+  uint64_t total_time_ms_ {0};
+  uint64_t con_trans_ {0};
+  std::queue<TCPSenderMessage> outstanding_seq {};
 };
