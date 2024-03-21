@@ -22,7 +22,7 @@ void TCPSender::push( const TransmitFunction& transmit )
   TCPSenderMessage msg_to_send;
   msg_to_send.payload = "";
 
-  if ((SYN || reader().bytes_buffered() || (writer().is_closed() && FIN)) && NextByte2Sent - LastByteAcked < rwnd)
+  if ((SYN || reader().bytes_buffered() || (FIN && writer().is_closed())) && NextByte2Sent - LastByteAcked < rwnd)
   {
     do {      
       std::string_view data_view = reader().peek();
@@ -36,10 +36,10 @@ void TCPSender::push( const TransmitFunction& transmit )
         data_view = reader().peek();
       }
       // 需要裁剪的部分
-      if (!data_view.empty() && msg_to_send.payload.size() <= spare_room && msg_to_send.payload.size() < TCPConfig::MAX_PAYLOAD_SIZE)
+      if (!data_view.empty() && msg_to_send.sequence_length() <= spare_room && msg_to_send.payload.size() < TCPConfig::MAX_PAYLOAD_SIZE)
       {
-        uint64_t payload_size = min(spare_room , TCPConfig::MAX_PAYLOAD_SIZE);
-        data_view = data_view.substr(0, payload_size - msg_to_send.payload.size());
+        uint64_t size = min(spare_room - msg_to_send.sequence_length() + msg_to_send.FIN, TCPConfig::MAX_PAYLOAD_SIZE - msg_to_send.payload.size());
+        data_view = data_view.substr(0, size);
         msg_to_send.payload += data_view;
         msg_to_send.FIN = false; // 被裁剪了，FIN肯定是false
       }
