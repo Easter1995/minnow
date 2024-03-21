@@ -46,9 +46,9 @@ private:
   Wrap32 isn_;
   uint64_t initial_RTO_ms_;
 
-  bool FIN {true};
+  bool FIN {true}; // 其实应该叫：FIN是否还没有发送，如果FIN发送，那么这个就是false
   bool SYN {true};
-  bool has_trans_win0{false};
+  bool has_trans_win0 {false}; // 防止一直向下读取
   // bool SYN_not_ack {true};
   uint64_t LastByteAcked {0}; // 表示上一个收到的ackno
   // uint64_t LastByteSent {0};
