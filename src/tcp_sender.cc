@@ -24,7 +24,7 @@ void TCPSender::push( const TransmitFunction& transmit )
 
   if ((SYN || reader().bytes_buffered() || (FIN && writer().is_closed())) && NextByte2Sent - LastByteAcked < rwnd)
   {
-    do {      
+    // do {      
       std::string_view data_view = reader().peek();
       msg_to_send.FIN = writer().is_closed();
       uint64_t spare_room = rwnd - (NextByte2Sent - LastByteAcked);
@@ -56,7 +56,7 @@ void TCPSender::push( const TransmitFunction& transmit )
       outstanding_seq.push(msg_to_send);
       input_.reader().pop(outstanding_seq.front().payload.size());
       msg_to_send.payload.clear();
-    }while (reader().bytes_buffered() && (NextByte2Sent - LastByteAcked < rwnd));
+    // }while (reader().bytes_buffered() && (NextByte2Sent - LastByteAcked < rwnd));
   } 
   else if ( rwnd == 0 && !has_trans_win0 ) {
     // 特殊情况rwnd为0，那么直接传输一个长为1的segment(FIN或者一个字节)过去试探一下

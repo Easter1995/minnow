@@ -1,5 +1,5 @@
 #include "address.hh"
-#include "socket.hh"
+#include "tcp_minnow_socket.hh"
 
 #include <cstdlib>
 #include <iostream>
@@ -10,10 +10,8 @@ using namespace std;
 
 void get_URL( const string& host, const string& path )
 {
-  cerr << "Function called: get_URL(" << host << ", " << path << ")\n";
-  cerr << "Warning: get_URL() has not been implemented yet.\n";
   Address address = Address( host, "http" );
-  TCPSocket tcpSocket = TCPSocket();
+  CS144TCPSocket tcpSocket = CS144TCPSocket();
   tcpSocket.connect( address );
   string request = "GET " + path + " HTTP/1.1\r\n" + "Host: " + host + "\r\n" + "Connection: close\r\n\r\n";
   tcpSocket.write( request );
@@ -22,6 +20,7 @@ void get_URL( const string& host, const string& path )
     tcpSocket.read( buffer );
     cout << buffer;
   }
+  tcpSocket.wait_until_closed();
 }
 
 int main( int argc, char* argv[] )
